@@ -1,0 +1,18 @@
+<html>
+<body>
+ACUPUNCTURISTS WITHOUT BORDERS ~ DONOR LOGIN
+
+{{^userName}}
+<form action="login" method="post">
+<input type="text" placeholder="Enter donor name" name="loginName">
+    <button type="submit">Login</button>
+</form>
+<br/>
+{{/userName}}
+<form action="logout" method="post">
+    <button type="submit">Logout</button>
+</form>
+{{#userName}}
+
+</body>
+</html>
