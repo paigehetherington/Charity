@@ -41,9 +41,9 @@ public class Main {
         Spark.post(
                 "/login",
                 ((request, response) ->  {
-                    String name = request.queryParams("userName");
+                    String name = request.queryParams("loginName");
                     if (name == null) {
-                        throw new Exception("Please enter login name");
+                        throw new Exception("Please enter login name.");
                     }
 
                     User user = donors.get(name);
@@ -52,7 +52,8 @@ public class Main {
                         donors.put(name, user);
                     }
                     Session session = request.session();
-                    String userName = session.attribute("userName");
+                    //String userName = session.attribute("userName");
+                    session.attribute("userName", name);
                     response.redirect("/");
                     return "";
 

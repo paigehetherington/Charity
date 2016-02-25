@@ -1,18 +1,51 @@
 <html>
 <body>
-ACUPUNCTURISTS WITHOUT BORDERS ~ DONOR LOGIN
+ACUPUNCTURISTS WITHOUT BORDERS ~ DONOR LOGIN<br/>
 
 {{^userName}}
 <form action="login" method="post">
-<input type="text" placeholder="Enter donor name" name="loginName">
+<input type="text" placeholder="Enter Login Name" name="loginName">
     <button type="submit">Login</button>
 </form>
 <br/>
 {{/userName}}
+
+{{#userName}}
+Hello {{userName}}! <br/>
+
 <form action="logout" method="post">
     <button type="submit">Logout</button>
 </form>
-{{#userName}}
+<br/>
+
+<form action="/make-donation" type="post">
+    <input type="text" placeholder="Donor Name" name="donorName">
+    <select name="Region">
+        <option selected disabled>Region</option>
+        <option value="Haiti">Haiti</option>
+        <option value="California">California</option>
+        <option value="Iowa">Iowa</option>
+        <option value="Nepal">Nepal</option>
+    </select>
+    <select name="Donation Amount">
+        <option selected disabled>Donation Amount</option>
+        <option value="$25">$25</option>
+        <option value="$50">$50</option>
+        <option value="$100">$100</option>
+        <option value="$250">$250</option>
+        <option value="$500">$500</option>
+        <option value="$1000">$1000</option>
+        <option value="Other amount">Other Amount</option>
+    </select>
+    <button type="submit">Submit</button>
+
+<br/>
+
+{{/userName}}
+
+
+</form>
+
 
 </body>
 </html>
