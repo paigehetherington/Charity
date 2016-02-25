@@ -11,7 +11,7 @@ ACUPUNCTURISTS WITHOUT BORDERS ~ DONOR LOGIN<br/>
 {{/userName}}
 
 {{#userName}}
-Hello {{userName}}! <br/>
+Welcome {{userName}}! <br/>
 
 <form action="logout" method="post">
     <button type="submit">Logout</button>
@@ -41,10 +41,17 @@ Hello {{userName}}! <br/>
 
 <br/>
 
-{{/userName}}
+
+
 
 
 </form>
+<ul>
+    {{#donations}}
+    <li> {{donorName}} {{region}} {{donationAmount}}</li>
+    {{/donations}}
+</ul>
+{{/userName}}
 
 
 </body>

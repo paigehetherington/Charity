@@ -61,6 +61,31 @@ public class Main {
         );
 
         Spark.post(
+                "/create-donation",
+                ((request, response) ->  {
+                    User user = getUserFromSession(request.session());
+                    if (user == null) {
+                        Spark.halt(403);
+                    }
+
+                    String donorName = request.queryParams("donorName");
+                    String region = request.queryParams("region");
+                    Double donationAmount = Double.valueOf(request.queryParams("donationAmount"));
+                    if (donorName == null || region == null) { //donation amount null?
+                        throw new Exception("Didn't receive all query parameters");
+                    }
+
+                    Donation donation = new Donation(donorName, region, donationAmount);
+                    user.donations.add(donation);
+                    response.redirect("/");
+                    return "";
+
+
+
+                })
+        );
+
+        Spark.post(
                 "/logout",
                 ((request, response) ->  {
                     Session session = request.session();
@@ -73,4 +98,9 @@ public class Main {
 
 
     }
+     static User getUserFromSession(Session session) {
+         String name = session.attribute("userName");
+         return donors.get(name);
+
+     }
 }
