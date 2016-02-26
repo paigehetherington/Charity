@@ -1,5 +1,29 @@
 <html>
 <body>
 
+{{#editDonation}}
+<form action="/edit-donation" method="post">
+    <input type="hidden" name="id" value="{{id}}"/>
+    <input type="text" placeholder="Donor Name" name="donorName">
+    <select name="region">
+        <option selected disabled>Region</option>
+        <option value="Haiti">Haiti</option>
+        <option value="California">California</option>
+        <option value="Iowa">Iowa</option>
+        <option value="Nepal">Nepal</option>
+    </select>
+    <select name="donationAmount">
+        <option selected disabled>Donation Amount</option>
+        <option value="25.00">$25</option>
+        <option value="50.00">$50</option>
+        <option value="100.00">$100</option>
+        <option value="250.00">$250</option>
+        <option value="500.00">$500</option>
+        <option value="1000.00">$1000</option>
+        <option value="Other amount">Other Amount</option>
+    </select>
+    <button type="submit">Submit</button>
+    </form>
+{{/editDonation}}
 </body>
 </html>

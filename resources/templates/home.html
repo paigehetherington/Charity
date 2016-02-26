@@ -54,6 +54,10 @@ Welcome {{userName}}! <br/>
             <input type="hidden" value="{{id}}" name="id"/>
             <button type="submit">Remove Donation</button>
         </form>
+        <!--<form action="/edit-donation" method="get">
+            <input type="hidden" value="{{id}}" name="id"/> -->
+            <a href="/edit?editId={{id}}">Edit</a>
+         </form>
         <!--<a href = "/delete-?id={{id}}">Remove</a> -->
     </li>
     {{/donations}}

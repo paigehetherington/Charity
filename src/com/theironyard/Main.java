@@ -109,6 +109,39 @@ public class Main {
 
                 })
         );
+        Spark.get(
+                "/edit",
+                ((request3, response3) ->  {
+                    HashMap m = new HashMap();
+
+                    String editId = request3.queryParams("editId");
+                    int id = Integer.valueOf(editId);
+                    User user = getUserFromSession(request3.session());
+                    Donation donation = user.donations.get(id);
+                    m.put("editDonation", donation);
+                    return new ModelAndView(m, "edit.html");
+                }),
+                new  MustacheTemplateEngine()
+        );
+        Spark.post(
+                "/edit-donation",
+                ((request2, response2) ->  {
+                    User user = getUserFromSession(request2.session());
+                    int donationId = Integer.valueOf(request2.queryParams("id"));
+                    Donation edit = user.donations.get(donationId);
+                    String editDonationAmount = request2.queryParams("donationAmount");
+                    edit.donationAmount = editDonationAmount;
+                    String editDonorName = request2.queryParams("donorName");
+                    edit.donorName = editDonorName;
+                    String editRegion = request2.queryParams("region");
+                    edit.region = editRegion;
+                    //user.donations.add(donationId, edit);
+                    response2.redirect("/");
+                    return "";
+                })
+        );
+
+
 
         Spark.get(
                 "/delete-donation",
