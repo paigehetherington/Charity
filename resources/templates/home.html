@@ -59,6 +59,18 @@ Welcome {{userName}}! <br/>
     {{/donations}}
 </ul>
 {{/userName}}
+<br/>
+<br/>
+<br/>
+
+<ul>
+    {{#allDonations}}
+    <li>{{donorName}}: {{region}} ${{donationAmount}}</li>
+    {{/allDonations}}
+    </ul>
+<!--{{^userName}} if no username, don't show list of all donations -->
+<!--{{/userName}}-->
+
 
 
 </body>

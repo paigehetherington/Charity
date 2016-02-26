@@ -7,11 +7,13 @@ import spark.Session;
 import spark.Spark;
 import spark.template.mustache.MustacheTemplateEngine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Main {
 
     static HashMap<String, User> donors = new HashMap<>();
+    static ArrayList<Donation> allDonations = new ArrayList<>();  //AL of all donations by all users
 
 
 
@@ -31,6 +33,7 @@ public class Main {
 
                     HashMap m = new HashMap();
                     m.put("userName", userName);
+                    m.put("allDonations", allDonations); // add AL of all users' donations to HM
 
                     if (user != null) {
                         m.put("donations", user.donations);
@@ -97,7 +100,8 @@ public class Main {
                     //String formattedDonation = String.format("%.2f", donationAmount);
 
                     Donation donation = new Donation(donorName, region, amount, id);
-                    user.donations.add(donation);
+                    user.donations.add(donation); //adds to user's array list
+                    allDonations.add(donation); //adds to main arraylist
                     response.redirect("/");
                     return "";
 
