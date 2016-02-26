@@ -6,12 +6,14 @@ package com.theironyard;
 public class Donation {
     String donorName;
     String region;
-    Double donationAmount;
+    String donationAmount;
+    int id;
 
 
-    public Donation(String donorName, String region, Double donationAmount) {
+    public Donation(String donorName, String region, String donationAmount, int id) {
         this.donorName = donorName;
         this.region = region;
         this.donationAmount = donationAmount;
+        this.id = id;
     }
 }

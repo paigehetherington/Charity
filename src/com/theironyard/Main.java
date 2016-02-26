@@ -27,11 +27,16 @@ public class Main {
                     String userName = session.attribute("userName");
                     User user = donors.get(userName);
 
+
+
                     HashMap m = new HashMap();
                     m.put("userName", userName);
+
+                    if (user != null) {
+                        m.put("donations", user.donations);
+                    }
+
                     return new ModelAndView(m, "home.html");
-
-
 
                 }),
                 new MustacheTemplateEngine()
@@ -42,15 +47,27 @@ public class Main {
                 "/login",
                 ((request, response) ->  {
                     String name = request.queryParams("loginName");
-                    if (name == null) {
-                        throw new Exception("Please enter login name.");
-                    }
+                    String password = request.queryParams("password");
+                    if (!donors.containsKey(name)) {
+                        User donor = new User(name, password);
 
-                    User user = donors.get(name);
-                    if (user == null) {
-                        user = new User(name);
-                        donors.put(name, user);
+                        donors.put(name, donor);
+                        response.redirect("/");
+                    } else
+                    if (password.equals(donors.get(name).password)) {
+                        response.redirect("/");
+                    } else {
+                        Spark.halt(403);
                     }
+//                    if (name == null) {
+//                        throw new Exception("Please enter login name.");
+//                    }
+//
+//                    User user = donors.get(name);
+//                    if (user == null) {
+//                        user = new User(name);
+//                        donors.put(name, user);
+
                     Session session = request.session();
                     //String userName = session.attribute("userName");
                     session.attribute("userName", name);
@@ -59,6 +76,7 @@ public class Main {
 
                 })
         );
+
 
         Spark.post(
                 "/create-donation",
@@ -70,18 +88,35 @@ public class Main {
 
                     String donorName = request.queryParams("donorName");
                     String region = request.queryParams("region");
-                    Double donationAmount = Double.valueOf(request.queryParams("donationAmount"));
+                    String  amount = request.queryParams("donationAmount");
+                    int id = user.donations.size();
+                    //Double donationAmount = Double.parseDouble(amount);
                     if (donorName == null || region == null) { //donation amount null?
                         throw new Exception("Didn't receive all query parameters");
                     }
+                    //String formattedDonation = String.format("%.2f", donationAmount);
 
-                    Donation donation = new Donation(donorName, region, donationAmount);
+                    Donation donation = new Donation(donorName, region, amount, id);
                     user.donations.add(donation);
                     response.redirect("/");
                     return "";
 
 
 
+                })
+        );
+
+        Spark.get(
+                "/delete-donation",
+                ((request1, response1) ->  {
+                    Session session = request1.session();
+                    String name = session.attribute("userName");// one argument for getting attribute
+                    User user = donors.get(name);
+                    String deleteId = request1.queryParams("id");
+                    int id = Integer.valueOf(deleteId);
+                    user.donations.remove(id);
+                    response1.redirect("/");
+                    return "";
                 })
         );
 

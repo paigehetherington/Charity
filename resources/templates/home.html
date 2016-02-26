@@ -1,10 +1,11 @@
 <html>
 <body>
-ACUPUNCTURISTS WITHOUT BORDERS ~ DONOR LOGIN<br/>
+ACUPUNCTURISTS WITHOUT BORDERS ~ DONATION PAGE<br/>
 
 {{^userName}}
 <form action="login" method="post">
 <input type="text" placeholder="Enter Login Name" name="loginName">
+    <input type="password" placeholder="Enter password" name="password">
     <button type="submit">Login</button>
 </form>
 <br/>
@@ -18,23 +19,23 @@ Welcome {{userName}}! <br/>
 </form>
 <br/>
 
-<form action="/make-donation" type="post">
+<form action="/create-donation" method="post">
     <input type="text" placeholder="Donor Name" name="donorName">
-    <select name="Region">
+    <select name="region">
         <option selected disabled>Region</option>
         <option value="Haiti">Haiti</option>
         <option value="California">California</option>
         <option value="Iowa">Iowa</option>
         <option value="Nepal">Nepal</option>
     </select>
-    <select name="Donation Amount">
+    <select name="donationAmount">
         <option selected disabled>Donation Amount</option>
-        <option value="$25">$25</option>
-        <option value="$50">$50</option>
-        <option value="$100">$100</option>
-        <option value="$250">$250</option>
-        <option value="$500">$500</option>
-        <option value="$1000">$1000</option>
+        <option value="25.00">$25</option>
+        <option value="50.00">$50</option>
+        <option value="100.00">$100</option>
+        <option value="250.00">$250</option>
+        <option value="500.00">$500</option>
+        <option value="1000.00">$1000</option>
         <option value="Other amount">Other Amount</option>
     </select>
     <button type="submit">Submit</button>
@@ -48,7 +49,13 @@ Welcome {{userName}}! <br/>
 </form>
 <ul>
     {{#donations}}
-    <li> {{donorName}} {{region}} {{donationAmount}}</li>
+    <li> {{donorName}}: {{region}} ${{donationAmount}}
+       <form action="/delete-donation" method="get">
+            <input type="hidden" value="{{id}}" name="id"/>
+            <button type="submit">Remove Donation</button>
+        </form>
+        <!--<a href = "/delete-?id={{id}}">Remove</a> -->
+    </li>
     {{/donations}}
 </ul>
 {{/userName}}
