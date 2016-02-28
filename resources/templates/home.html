@@ -1,10 +1,14 @@
 <html>
 <body>
+
+<head>
+    <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+</head>
 ACUPUNCTURISTS WITHOUT BORDERS ~ DONATION PAGE<br/>
 
 {{^userName}}
 <form action="login" method="post">
-<input type="text" placeholder="Enter Login Name" name="loginName">
+<   <input type="text" placeholder="Enter Login Name" name="loginName">
     <input type="password" placeholder="Enter password" name="password">
     <button type="submit">Login</button>
 </form>
@@ -14,7 +18,7 @@ ACUPUNCTURISTS WITHOUT BORDERS ~ DONATION PAGE<br/>
 {{#userName}}
 Welcome {{userName}}! <br/>
 
-<form action="logout" method="post">
+<form action="/logout" method="post">
     <button type="submit">Logout</button>
 </form>
 <br/>
@@ -47,6 +51,7 @@ Welcome {{userName}}! <br/>
 
 
 </form>
+
 <ul>
     {{#donations}}
     <li> {{donorName}}: {{region}} ${{donationAmount}}
@@ -66,7 +71,7 @@ Welcome {{userName}}! <br/>
 <br/>
 <br/>
 <br/>
-
+ALL DONATIONS:
 <ul>
     {{#allDonations}}
     <li>{{donorName}}: {{region}} ${{donationAmount}}</li>
@@ -74,8 +79,10 @@ Welcome {{userName}}! <br/>
     </ul>
 <!--{{^userName}} if no username, don't show list of all donations -->
 <!--{{/userName}}-->
+<br/>
 
-
+Acupuncturists Without Borders' (AWB) vision is to foster the creation of stable, peaceful global communities through its community-based acupuncture services and training which interrupt the cycles of unresolved trauma.
+AWB provides immediate disaster relief and recovery to communities that are in crisis resulting from disaster or human conflict.
 
 </body>
 </html>

@@ -20,6 +20,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        Spark.externalStaticFileLocation("public");
+
         Spark.init();
 
         Spark.get(
@@ -152,6 +154,7 @@ public class Main {
                     String deleteId = request1.queryParams("id");
                     int id = Integer.valueOf(deleteId);
                     user.donations.remove(id);
+                    allDonations.remove(id);
                     response1.redirect("/");
                     return "";
                 })
