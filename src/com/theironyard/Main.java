@@ -13,8 +13,8 @@ import java.util.HashMap;
 
 public class Main {
 
-    static HashMap<String, User> donors = new HashMap<>();
-    static ArrayList<Donation> allDonations = new ArrayList<>();  //AL of all donations by all users
+//    static HashMap<String, User> donors = new HashMap<>();
+//    static ArrayList<Donation> allDonations = new ArrayList<>();  //AL of all donations by all users
 
     public static void createTables(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
@@ -108,6 +108,7 @@ public static void insertUser(Connection conn, String name, String password) thr
     public static void main(String[] args) throws SQLException {
 
         Connection conn = DriverManager.getConnection("jdbc:h2:./main");
+        createTables(conn);
 
         Spark.externalStaticFileLocation("public");
 
@@ -118,12 +119,13 @@ public static void insertUser(Connection conn, String name, String password) thr
                 ((request, response) ->  {
                     Session session = request.session();
                     String userName = session.attribute("userName");
-                    User user = donors.get(userName);
+                    User user = selectUser(conn,userName);
 
 
 
                     HashMap m = new HashMap();
                     m.put("userName", userName);
+                    ArrayList<Donation> allDonations = selectDonations(conn);
                     m.put("allDonations", allDonations); // add AL of all users' donations to HM
 
                     if (user != null) {
@@ -142,17 +144,25 @@ public static void insertUser(Connection conn, String name, String password) thr
                 ((request, response) ->  {
                     String name = request.queryParams("loginName");
                     String password = request.queryParams("password");
-                    if (!donors.containsKey(name)) {
-//                        User donor = new User(name, password);
-//
-//                        donors.put(name, donor);
-                        response.redirect("/");
-                    } else
-                    if (password.equals(donors.get(name).password)) {
-                        response.redirect("/");
-                    } else {
-                        Spark.halt(403);
+                    if (name == null) {
+                        throw new Exception("Login name not found.");
                     }
+
+                    User user = selectUser(conn, name);
+                    if (user == null) {
+                        insertUser(conn, name, password);
+                    }
+//                    if (!donors.containsKey(name)) {
+////                        User donor = new User(name, password);
+////
+////                        donors.put(name, donor);
+//                        response.redirect("/");
+//                    } else
+//                    if (password.equals(donors.get(name).password)) {
+//                        response.redirect("/");
+//                    } else {
+//                        Spark.halt(403);
+//                    }
 //                    if (name == null) {
 //                        throw new Exception("Please enter login name.");
 //                    }
@@ -175,7 +185,7 @@ public static void insertUser(Connection conn, String name, String password) thr
         Spark.post(
                 "/create-donation",
                 ((request, response) ->  {
-                    User user = getUserFromSession(request.session());
+                    User user = getUserFromSession(conn, request.session());
                     if (user == null) {
                         Spark.halt(403);
                     }
@@ -192,7 +202,8 @@ public static void insertUser(Connection conn, String name, String password) thr
 
                     Donation donation = new Donation(donorName, region, amount, id);
                     user.donations.add(donation); //adds to user's array list
-                    allDonations.add(donation); //adds to main arraylist
+                    insertDonation(conn, user.id, donorName, region, amount);
+                    //allDonations.add(donation); //adds to main arraylist
                     response.redirect("/");
                     return "";
 
@@ -207,8 +218,9 @@ public static void insertUser(Connection conn, String name, String password) thr
 
                     String editId = request3.queryParams("editId");
                     int id = Integer.valueOf(editId);
-                    User user = getUserFromSession(request3.session());
-                    Donation donation = user.donations.get(id);
+                    User user = getUserFromSession(conn, request3.session());
+
+                    Donation donation = selectDonation(conn, id);           //user.donations.get(id);
                     m.put("editDonation", donation);
                     return new ModelAndView(m, "edit.html");
                 }),
@@ -217,7 +229,7 @@ public static void insertUser(Connection conn, String name, String password) thr
         Spark.post(
                 "/edit-donation",
                 ((request2, response2) ->  {
-                    User user = getUserFromSession(request2.session());
+                    User user = getUserFromSession(conn, request2.session());
                     int donationId = Integer.valueOf(request2.queryParams("id"));
                     Donation edit = user.donations.get(donationId);
                     String editDonationAmount = request2.queryParams("donationAmount");
@@ -226,6 +238,8 @@ public static void insertUser(Connection conn, String name, String password) thr
                     edit.donorName = editDonorName;
                     String editRegion = request2.queryParams("region");
                     edit.region = editRegion;
+                    Donation donation = new Donation(editDonorName, editRegion, editDonationAmount, donationId);
+                    updateDonation(conn, donation);
                     //user.donations.add(donationId, edit);
                     response2.redirect("/");
                     return "";
@@ -239,11 +253,12 @@ public static void insertUser(Connection conn, String name, String password) thr
                 ((request1, response1) ->  {
                     Session session = request1.session();
                     String name = session.attribute("userName");// one argument for getting attribute
-                    User user = donors.get(name);
+                    //User user = selectUser(conn, name);   //donors.get(name);
                     String deleteId = request1.queryParams("id");
                     int id = Integer.valueOf(deleteId);
-                    user.donations.remove(id);
-                    allDonations.remove(id);
+                    deleteDonation(conn, id);
+                    //user.donations.remove(id);
+                    //allDonations.remove(id);
                     response1.redirect("/");
                     return "";
                 })
@@ -262,9 +277,9 @@ public static void insertUser(Connection conn, String name, String password) thr
 
 
     }
-     static User getUserFromSession(Session session) {
+     static User getUserFromSession(Connection conn, Session session) throws SQLException {
          String name = session.attribute("userName");
-         return donors.get(name);
-
+         //return donors.get(name);
+        return selectUser(conn, name);
      }
 }

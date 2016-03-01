@@ -53,7 +53,7 @@ Welcome {{userName}}! <br/>
 </form>
 
 <ul>
-    {{#donations}}
+    {{#allDonations}}
     <li> {{donorName}}: {{region}} ${{donationAmount}}
        <form action="/delete-donation" method="get">
             <input type="hidden" value="{{id}}" name="id"/>
@@ -62,16 +62,16 @@ Welcome {{userName}}! <br/>
         <!--<form action="/edit-donation" method="get">
             <input type="hidden" value="{{id}}" name="id"/> -->
             <a href="/edit?editId={{id}}">Edit</a>
-         </form>
+         <!--</form -->
         <!--<a href = "/delete-?id={{id}}">Remove</a> -->
     </li>
-    {{/donations}}
+    {{/allDonations}}
 </ul>
 {{/userName}}
 <br/>
 <br/>
 <br/>
-ALL DONATIONS:
+<!--ALL DONATIONS:
 <ul>
     {{#allDonations}}
     <li>{{donorName}}: {{region}} ${{donationAmount}}</li>
