@@ -15,5 +15,7 @@ public class Donation {
         this.region = region;
         this.donationAmount = donationAmount;
         this.id = id;
+
     }
+
 }

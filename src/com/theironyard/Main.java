@@ -7,6 +7,7 @@ import spark.Session;
 import spark.Spark;
 import spark.template.mustache.MustacheTemplateEngine;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,10 +16,98 @@ public class Main {
     static HashMap<String, User> donors = new HashMap<>();
     static ArrayList<Donation> allDonations = new ArrayList<>();  //AL of all donations by all users
 
+    public static void createTables(Connection conn) throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("CREATE TABLE IF NOT EXISTS users(id IDENTITY, name VARCHAR, password VARCHAR)");
+        stmt.execute("CREATE TABLE IF NOT EXISTS donations(id IDENTITY, user_id INT, donor_name VARCHAR, region VARCHAR, donation_amount VARCHAR)");
+
+    }
+
+
+public static void insertUser(Connection conn, String name, String password) throws SQLException {
+    PreparedStatement stmt = conn.prepareStatement("INSERT INTO users VALUES(NULL, ?, ?)");
+    stmt.setString(1, name);
+    stmt.setString(2, password);
+    stmt.execute();
+}
+
+    public static User selectUser(Connection conn, String name) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE name = ?");
+        stmt.setString(1, name);
+        ResultSet results = stmt.executeQuery();
+        if (results.next()) {
+            int id = results.getInt("id");
+            String password = results.getString("password");
+            return new User(id, name, password);
+
+        }
+        return null;
+
+    }
+    public static void insertDonation(Connection conn, int userId, String donorName, String region, String donationAmount) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO donations VALUES(NULL, ?, ?, ?, ?)");
+        stmt.setInt(1, userId);
+        stmt.setString(2, donorName);
+        stmt.setString(3, region);
+        stmt.setString(4, donationAmount);
+        stmt.execute();
+    }
+
+    public static Donation selectDonation(Connection conn, int id) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM donations INNER JOIN users ON donations.user_id = users.id WHERE donations.id = ?");
+        stmt.setInt(1, id);
+        ResultSet results = stmt.executeQuery();
+         if (results.next()) {
+             String donorName = results.getString("donations.donor_name");
+             String region = results.getString("donations.region");
+             String donationAmount = results.getString("donations.donation_amount");
+             String name = results.getString("users.name");
+             return new Donation(donorName, region, donationAmount, id);
+         }
+        return null;
+    }
+
+    public static ArrayList<Donation> selectDonations(Connection conn) throws SQLException {
+        ArrayList<Donation> donations = new ArrayList<>();
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM donations INNER JOIN users ON donations.user_id = users.id");
+        ResultSet results = stmt.executeQuery();
+        while (results.next()) {
+            int id = results.getInt("donations.id");
+            String donorName = results.getString("donations.donor_name");
+            String region = results.getString("donations.region");
+            String donationAmount = results.getString("donations.donation_amount");
+            String name = results.getString("users.name");
+            Donation donation = new Donation(donorName, region, donationAmount, id);
+            donations.add(donation);
+
+        }
+        return donations;
+
+    }
+    public static void updateDonation(Connection conn, Donation donation) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("UPDATE donations SET donor_name = ?, region = ?, donation_amount = ? WHERE id = ?");
+        stmt.setString(1, donation.donorName);
+        stmt.setString(2, donation.region);
+        stmt.setString(3, donation.donationAmount);
+        stmt.setInt(4, donation.id);
+        stmt.execute();
+
+    }
+
+    public static void deleteDonation(Connection conn, int id) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM donations WHERE id =?");
+        stmt.setInt(1, id);
+        stmt.execute();
+
+    }
 
 
 
-    public static void main(String[] args) {
+
+
+    public static void main(String[] args) throws SQLException {
+
+        Connection conn = DriverManager.getConnection("jdbc:h2:./main");
 
         Spark.externalStaticFileLocation("public");
 
@@ -54,9 +143,9 @@ public class Main {
                     String name = request.queryParams("loginName");
                     String password = request.queryParams("password");
                     if (!donors.containsKey(name)) {
-                        User donor = new User(name, password);
-
-                        donors.put(name, donor);
+//                        User donor = new User(name, password);
+//
+//                        donors.put(name, donor);
                         response.redirect("/");
                     } else
                     if (password.equals(donors.get(name).password)) {
