@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  */
 public class MainTest {
     public Connection startConnection() throws SQLException {
-        Connection conn = DriverManager.getConnection("jdbc:h2:./main");
+        Connection conn = DriverManager.getConnection("jdbc:h2:./test");
         Main.createTables(conn);
         return conn;
     }
