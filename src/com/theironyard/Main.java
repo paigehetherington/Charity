@@ -231,7 +231,7 @@ public static void insertUser(Connection conn, String name, String password) thr
                 ((request2, response2) ->  {
                     User user = getUserFromSession(conn, request2.session());
                     int donationId = Integer.valueOf(request2.queryParams("id"));
-                    Donation edit = user.donations.get(donationId);
+                    Donation edit = selectDonation(conn, donationId);                      //user.donations.get(donationId);
                     String editDonationAmount = request2.queryParams("donationAmount");
                     edit.donationAmount = editDonationAmount;
                     String editDonorName = request2.queryParams("donorName");
